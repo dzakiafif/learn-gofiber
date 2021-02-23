@@ -10,20 +10,40 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-var books []models.Book
-
 func Index(c *fiber.Ctx) error {
 	return c.JSON("welcome to api")
 }
 
 func List(c *fiber.Ctx) error {
 
+	var books []models.Book
+
 	config.InitDB().Debug().Scopes(helpers.Paginate(c)).Find(&books)
 
 	return c.JSON(helpers.ResponseSuccess("sucess",fiber.StatusOK,books))
 }
 
+func ShowBook(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	var books models.Book
+
+	if id == "" {
+		return c.JSON(helpers.ResponseFailed("error",fiber.StatusUnprocessableEntity,"invalid id"))
+	}
+
+	config.InitDB().First(&books,id)
+
+	if books.BookName == "" {
+		return c.JSON(helpers.ResponseFailed("error",fiber.StatusBadRequest,"data not found"))
+	}
+
+	return c.JSON(helpers.ResponseSuccess("success",fiber.StatusOK,books))
+}
+
 func CreateBook(c *fiber.Ctx) error {
+	var books models.Book
+
 	p := new(entity.CreateBookRequest)
 
 	if err := c.BodyParser(p); err != nil {
@@ -40,7 +60,7 @@ func CreateBook(c *fiber.Ctx) error {
         return c.JSON(helpers.ResponseFailed("error",fiber.StatusBadRequest,errors))
     }
 
-	config.InitDB().Last(&books)
+	config.InitDB().Where("book_name = ?",p.BookName).First(&books)
 
 	response := helpers.ResponseSuccess("success",fiber.StatusOK,books)
 
@@ -64,6 +84,8 @@ func UpdateBook(c *fiber.Ctx) error {
 		BookName: p.BookName,
 		BookAuthor: p.BookAuthor,
 		BookYear: p.BookYear})
+
+	var books models.Book
 
 	config.InitDB().First(&books,id)
 

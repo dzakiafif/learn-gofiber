@@ -13,6 +13,8 @@ func Routes(app *fiber.App){
 
 	api.Get("/list-book",controllers.List)
 
+	api.Get("/show-book/:id",controllers.ShowBook)
+
 	api.Post("/create-book",controllers.CreateBook)
 
 	api.Put("update-book/:id",controllers.UpdateBook)
