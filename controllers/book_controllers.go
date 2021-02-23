@@ -18,7 +18,7 @@ func List(c *fiber.Ctx) error {
 
 	var books []models.Book
 
-	config.InitDB().Debug().Scopes(helpers.Paginate(c)).Find(&books)
+	config.InitDB().Scopes(helpers.Paginate(c)).Find(&books)
 
 	return c.JSON(helpers.ResponseSuccess("sucess",fiber.StatusOK,books))
 }
