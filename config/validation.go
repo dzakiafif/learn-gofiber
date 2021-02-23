@@ -4,7 +4,7 @@ import (
     "log"
     "github.com/go-playground/locales/id"
 	"github.com/go-playground/validator/v10"
-    "github.com/go-playground/universal-translator"
+    ut "github.com/go-playground/universal-translator"
     id_translate "github.com/go-playground/validator/v10/translations/id"
 )
 
